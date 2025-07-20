@@ -193,7 +193,7 @@ function drawSwitches() {
         
         // Draw clickable area indicator
         context.fillStyle = 'rgba(255, 255, 0, 0.2)';
-        context.fillRect(s.x - switchLength, s.y - 30, switchLength * 2, 60);
+        context.fillRect(s.x - switchLength * 1.5, s.y - 50, switchLength * 3, 100);
     });
 }
 
@@ -349,10 +349,12 @@ onPointer('down', function(e, object) {
     console.log('Click at:', e.x, e.y);
     
     switchPositions.forEach((s, index) => {
-        const isNearX = Math.abs(e.x - s.x) < switchLength;
-        const isNearY = Math.abs(e.y - s.y) < 30;
+        const xDist = Math.abs(e.x - s.x);
+        const yDist = Math.abs(e.y - s.y);
+        const isNearX = xDist < switchLength * 1.5; // Increased from switchLength to switchLength * 1.5
+        const isNearY = yDist < 50; // Increased from 30 to 50
         
-        console.log(`Switch ${index} at (${s.x}, ${s.y}): nearX=${isNearX}, nearY=${isNearY}, active=${s.active}`);
+        console.log(`Switch ${index} at (${s.x}, ${s.y}): xDist=${xDist}, yDist=${yDist}, nearX=${isNearX}, nearY=${isNearY}, active=${s.active}`);
 
         if (isNearX && isNearY) {
             s.active = !s.active;
