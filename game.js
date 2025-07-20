@@ -343,14 +343,19 @@ document.getElementById('restart').addEventListener('click', function() {
     trainSpawnInterval = initialTrainSpawnInterval;
 });
 
-onPointer('down', function(e, object) {
+// Use canvas click event instead of Kontra pointer
+canvas.addEventListener('click', function(e) {
     if (gameOver) return;
     
-    console.log('Click at:', e.x, e.y);
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    console.log('Click at:', x, y);
     
     switchPositions.forEach((s, index) => {
-        const xDist = Math.abs(e.x - s.x);
-        const yDist = Math.abs(e.y - s.y);
+        const xDist = Math.abs(x - s.x);
+        const yDist = Math.abs(y - s.y);
         const isNearX = xDist < switchLength * 1.5; // Increased from switchLength to switchLength * 1.5
         const isNearY = yDist < 50; // Increased from 30 to 50
         
