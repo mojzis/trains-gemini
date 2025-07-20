@@ -138,7 +138,7 @@ function Train(properties) {
         if (this.isStopped) {
             if (Date.now() - this.stopTime > stopDuration) {
                 this.isStopped = false; // Resume movement
-                this.x = stopPosition + (this.speed * trainSpeed); // Immediately move past the stop position
+                this.x = stopPosition + 10; // Move past the stop position to avoid re-triggering
             }
         }
 
@@ -221,6 +221,19 @@ function drawHighScore() {
 function drawStop() {
     context.fillStyle = '#ff0000'; // Red color for the stop
     context.fillRect(stopPosition, trackYPositions[stopTrack] - 10, 10, 20); // A small red rectangle
+}
+
+function drawDebugInfo() {
+    context.fillStyle = 'black';
+    context.font = '12px Arial';
+    context.textAlign = 'left';
+    let y = 60;
+    trains.forEach((train, i) => {
+        const status = train.isStopped ? 'STOPPED' : 'MOVING';
+        const timeLeft = train.isStopped ? Math.max(0, stopDuration - (Date.now() - train.stopTime)) : 0;
+        context.fillText(`Train ${i}: x=${Math.floor(train.x)}, track=${train.track}, ${status} ${timeLeft}ms`, 10, y);
+        y += 15;
+    });
 }
 
 // --- Collision Detection ---
@@ -310,6 +323,7 @@ let loop = GameLoop({
     drawScore();
     drawHighScore();
     drawStop();
+    drawDebugInfo();
     drawGameOver();
   }
 });
