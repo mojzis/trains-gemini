@@ -177,10 +177,10 @@ function drawTracks() {
 }
 
 function drawSwitches() {
-    context.strokeStyle = switchColor;
-    context.lineWidth = switchWidth;
-
     switchPositions.forEach(s => {
+        // Draw switch track
+        context.strokeStyle = s.active ? '#00ff00' : switchColor;
+        context.lineWidth = switchWidth;
         context.beginPath();
         const fromY = s.y;
         const toY = s.active ? trackYPositions[s.toTrack] : s.y;
@@ -190,6 +190,10 @@ function drawSwitches() {
         context.moveTo(s.x - switchLength / 2, fromY + (Math.random() * 1 - 0.5)); // Smaller random start Y
         context.quadraticCurveTo(controlX, controlY, s.x + switchLength / 2, toY + (Math.random() * 1 - 0.5)); // Smaller random end Y
         context.stroke();
+        
+        // Draw clickable area indicator
+        context.fillStyle = 'rgba(255, 255, 0, 0.2)';
+        context.fillRect(s.x - switchLength, s.y - 30, switchLength * 2, 60);
     });
 }
 
@@ -341,12 +345,19 @@ document.getElementById('restart').addEventListener('click', function() {
 
 onPointer('down', function(e, object) {
     if (gameOver) return;
-    switchPositions.forEach(s => {
-        const isNearX = Math.abs(e.x - s.x) < switchLength / 2;
+    
+    console.log('Click at:', e.x, e.y);
+    
+    switchPositions.forEach((s, index) => {
+        const isNearX = Math.abs(e.x - s.x) < switchLength;
         const isNearY = Math.abs(e.y - s.y) < 30;
+        
+        console.log(`Switch ${index} at (${s.x}, ${s.y}): nearX=${isNearX}, nearY=${isNearY}, active=${s.active}`);
 
         if (isNearX && isNearY) {
             s.active = !s.active;
+            playSound('switch');
+            console.log(`Switch ${index} toggled to ${s.active}`);
         }
     });
 });
